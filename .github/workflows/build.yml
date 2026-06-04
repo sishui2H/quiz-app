@@ -18,17 +18,27 @@ jobs:
       with:
         python-version: '3.10'
     
-    - name: Install dependencies
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential git ffmpeg libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev zlib1g-dev libgl1-mesa-dev automake libtool pkg-config zip unzip autoconf libncurses5-dev
+    
+    - name: Install Python dependencies
       run: |
         python -m pip install --upgrade pip
         pip install buildozer cython
-        sudo apt-get update
-        sudo apt-get install -y build-essential git ffmpeg libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev zlib1g-dev libgl1-mesa-dev automake libtool pkg-config zip unzip
     
     - name: Build APK with Buildozer
       run: |
-        buildozer -v android debug 2>&1 || true
-        ls -la bin/
+        buildozer android debug 2>&1 | tee build.log
+        ls -la
+        ls -la bin/ 2>/dev/null || echo "bin dir doesn't exist"
+    
+    - name: Upload log
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-log
+        path: build.log
     
     - name: Upload APK
       uses: actions/upload-artifact@v4
