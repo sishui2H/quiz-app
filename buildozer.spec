@@ -36,8 +36,8 @@ android.api = 33
 # (int) Minimum API your APK will support.
 android.minapi = 21
 
-# (str) The Android arch to build for
-android.arch = arm64-v8a
+# (list) The Android archs to build for
+android.archs = arm64-v8a
 
 [buildozer]
 
