@@ -368,6 +368,7 @@ class ResultScreen(Screen):
 
 class QuizApp(App):
     def build(self):
+        self.copy_resources()
         self.controller = QuizController()
         self.controller.load_questions()
         
@@ -377,6 +378,32 @@ class QuizApp(App):
         sm.add_widget(ResultScreen(self.controller, name='result'))
         
         return sm
+    
+    def copy_resources(self):
+        # 在 Android 上把资源文件复制到可访问的位置
+        try:
+            from kivy.utils import platform
+            if platform == 'android':
+                from android.storage import app_storage_path
+                from kivy.resources import resource_find
+                import shutil
+                
+                app_dir = app_storage_path()
+                docx_files = [
+                    '给学生的练习题（单选300）.docx',
+                    '给学生的练习题（多选200）.docx',
+                    '给学生的练习题（判断100）.docx'
+                ]
+                
+                for filename in docx_files:
+                    src = resource_find(filename)
+                    if src:
+                        dst = os.path.join(app_dir, filename)
+                        if not os.path.exists(dst):
+                            shutil.copy(src, dst)
+                            print(f"Copied {filename} to {dst}")
+        except Exception as e:
+            print(f"Error copying resources: {e}")
 
 
 if __name__ == '__main__':

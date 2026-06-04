@@ -16,6 +16,10 @@ class DocxParser:
         try:
             from kivy.utils import platform
             if platform == 'android':
+                from kivy.resources import resource_find
+                path = resource_find(file_name)
+                if path:
+                    return path
                 from android.storage import app_storage_path
                 return os.path.join(app_storage_path(), file_name)
         except ImportError:
